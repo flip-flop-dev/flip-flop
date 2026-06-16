@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlipFlop.Messaging.Abstractions", "FlipFlop.Messaging.Abstractions\FlipFlop.Messaging.Abstractions.csproj", "{4D4A5CDC-F88F-499E-957C-2E4CADB697F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CC753596-F08F-4278-A9AD-3272F587AF17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlipFlop.Messaging.Kafka", "FlipFlop.Messaging.Kafka\FlipFlop.Messaging.Kafka.csproj", "{AEBA2528-B39B-4219-AC3A-B9343FC10AD5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1882C239-CB88-4774-893C-E724544BDA80}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D4A5CDC-F88F-499E-957C-2E4CADB697F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D4A5CDC-F88F-499E-957C-2E4CADB697F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D4A5CDC-F88F-499E-957C-2E4CADB697F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D4A5CDC-F88F-499E-957C-2E4CADB697F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEBA2528-B39B-4219-AC3A-B9343FC10AD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEBA2528-B39B-4219-AC3A-B9343FC10AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEBA2528-B39B-4219-AC3A-B9343FC10AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEBA2528-B39B-4219-AC3A-B9343FC10AD5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4D4A5CDC-F88F-499E-957C-2E4CADB697F6} = {CC753596-F08F-4278-A9AD-3272F587AF17}
+		{AEBA2528-B39B-4219-AC3A-B9343FC10AD5} = {CC753596-F08F-4278-A9AD-3272F587AF17}
+	EndGlobalSection
+EndGlobal
