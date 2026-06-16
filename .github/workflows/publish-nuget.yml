@@ -1,0 +1,96 @@
+name: Publish NuGet Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_type:
+        description: Publish type
+        required: true
+        type: choice
+        options:
+          - release
+          - prerelease
+      tag:
+        description: Git tag to publish (release only, e.g. v1.0.0)
+        required: false
+        type: string
+      base_version:
+        description: Base version for prerelease (e.g. 1.0.0)
+        required: false
+        type: string
+      prerelease_number:
+        description: Prerelease build number (prerelease only, e.g. 1)
+        required: false
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Resolve publish parameters
+        id: publish
+        run: |
+          set -euo pipefail
+
+          if [ "${{ inputs.publish_type }}" = "release" ]; then
+            tag="${{ inputs.tag }}"
+            if [ -z "$tag" ]; then
+              echo "Tag is required for release publishes."
+              exit 1
+            fi
+
+            version="${tag#v}"
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=$tag" >> "$GITHUB_OUTPUT"
+            echo "Publishing release version $version from tag $tag"
+          else
+            base_version="${{ inputs.base_version }}"
+            prerelease_number="${{ inputs.prerelease_number }}"
+            if [ -z "$base_version" ] || [ -z "$prerelease_number" ]; then
+              echo "base_version and prerelease_number are required for prerelease publishes."
+              exit 1
+            fi
+
+            branch="${{ github.ref_name }}"
+            sanitized_branch=$(echo "$branch" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9.-]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
+            version="${base_version}-${sanitized_branch}.${prerelease_number}"
+
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            echo "checkout_ref=${{ github.ref }}" >> "$GITHUB_OUTPUT"
+            echo "Publishing prerelease version $version from branch $branch"
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.publish.outputs.checkout_ref }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore FlipFlop.sln
+
+      - name: Build
+        run: dotnet build FlipFlop.sln --configuration Release --no-restore -p:Version=${{ steps.publish.outputs.version }}
+
+      - name: Test
+        run: dotnet test FlipFlop.sln --configuration Release --no-build --verbosity normal
+
+      - name: Pack
+        run: dotnet pack FlipFlop.sln --configuration Release --no-build -p:Version=${{ steps.publish.outputs.version }} -o ./artifacts
+
+      - name: NuGet login (OIDC)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to NuGet.org
+        run: dotnet nuget push "./artifacts/*.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
