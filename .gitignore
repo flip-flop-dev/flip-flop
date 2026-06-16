@@ -63,3 +63,4 @@ riderModule.iml
 .vscode
 *.sln.DotSettings.user
 *.user
+.DS_Store
